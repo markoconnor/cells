@@ -94,22 +94,19 @@ class AgentMind:
             msg.send_message((MessageType.ATTACK, mx, my))
             return cells.Action(cells.ACT_ATTACK, target.get_pos())
     
-        # Eat any energy I find until I am 'full'
-        if view.get_energy().get(mx, my) > 0:
-            if (me.energy < 50):
-                return cells.Action(cells.ACT_EAT)
-            if (me.energy < self.defense):# and (random.random()>0.1)):
-               return cells.Action(cells.ACT_EAT)
-    
         # If there is a plant near by go to it and spawn all I can
         if not self.my_plant and len(view.get_plants())>0:
             self.my_plant = view.get_plants()[0]
-        if self.my_plant:
+        if self.my_plant and me.energy > 51:
             pos = self.smart_spawn(me, view)
             if pos:
                 return cells.Action(cells.ACT_SPAWN, (me.x + pos[0], me.y + pos[1], self))
     
-        if me.energy > 50 or (armageddon_declared and me.energy > 400):
+        # Eat any energy I find until I am 'full'
+        if view.get_energy().get(mx, my) > 1:
+            return cells.Action(cells.ACT_EAT)
+    
+        if me.energy > 51 or (armageddon_declared and me.energy > 400):
             pos = self.smart_spawn(me, view)
             if pos:
                 return cells.Action(cells.ACT_SPAWN, (me.x + pos[0], me.y + pos[1], self))
